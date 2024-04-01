@@ -13,7 +13,38 @@ import { faLink } from "@fortawesome/free-solid-svg-icons";
 const Page: FC = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
+const Note: React.FC = () => {
+    const [noteData, setNoteData] = useState<null | { title: string; content: any[] }>(null);
+    useEffect(() => {
+        fetch('/api/notes/note')
+            .then(response => response.json())
+            .then(data => setNoteData(data));
+    }, []);
+    
     return (
+        {noteData && (
+                            <>
+                                <div className='flex items-start gap-[10px] self-stretch pt-9 pb-2'>
+                                    <p className='text-[30px] font-semibold'>{noteData.title}</p>
+                                </div>
+                                {noteData.content.map((item, index) => (
+                                    typeof item === 'string' ? (
+                                        <div key={index} className='flex items-start gap-[10px] self-stretch flex-col py-1'>
+                                            <p className='text-normal font-normal leading-6'>{item}</p>
+                                        </div>
+                                    ) : (
+                                        <div key={index} className='flex items-start gap-[10px] self-stretch flex-col'>
+                                            <ul className='list-disc list-inside leading-6'>
+                                            {item.items.map((listItem: string, listItemIndex: number) => (
+                                                    <li key={listItemIndex}>{listItem}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )
+                                ))}
+                            </>
+                        )}
+    
         <div className="flex flex-row">
 
             <div className="flex flex-col pt-[10px] pb-[10px] border-r-[2px] border-[#F5F5F4]">
